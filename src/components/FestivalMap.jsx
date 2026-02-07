@@ -1,6 +1,7 @@
+// @ts-nocheck
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
-import { AlertTriangle, Accessibility, DoorOpen, Droplets, Music, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, Accessibility, DoorOpen, Droplets, Music, ShieldAlert, Info, X } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -80,7 +81,7 @@ function LocationMarker({ onLocationFound }) {
   }, [map, onLocationFound]);
 
   return position ? (
-    <Marker 
+    <Marker
       position={position}
       icon={L.divIcon({
         className: 'user-marker',
@@ -94,17 +95,19 @@ function LocationMarker({ onLocationFound }) {
   ) : null;
 }
 
-export default function FestivalMap({ 
-  crowdReports = [], 
-  showCrowdDensity = true, 
+export default function FestivalMap({
+  crowdReports = [],
+  showCrowdDensity = true,
   showAccessibility = true,
   showExits = true,
   showStages = true,
   showWater = true,
   showMedical = true,
   onLocationFound,
-  userLocation 
+  userLocation
 }) {
+
+
   const getReportIcon = (type) => {
     const icons = {
       mud: { color: '#92400e', icon: '💧' },
@@ -120,9 +123,9 @@ export default function FestivalMap({
 
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden">
-      <MapContainer 
-        center={ACL_CENTER} 
-        zoom={17} 
+      <MapContainer
+        center={ACL_CENTER}
+        zoom={17}
         className="w-full h-full z-0"
         zoomControl={false}
       >
@@ -130,7 +133,7 @@ export default function FestivalMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
-        
+
         <LocationMarker onLocationFound={onLocationFound} />
 
         {/* Crowd Density Circles */}
@@ -158,7 +161,7 @@ export default function FestivalMap({
 
         {/* Stages */}
         {showStages && FESTIVAL_FEATURES.stages.map((stage, idx) => (
-          <Marker 
+          <Marker
             key={`stage-${idx}`}
             position={stage.position}
             icon={createCustomIcon('#9333ea', '🎵')}
@@ -174,7 +177,7 @@ export default function FestivalMap({
 
         {/* Accessibility Features */}
         {showAccessibility && FESTIVAL_FEATURES.accessibility.map((feature, idx) => (
-          <Marker 
+          <Marker
             key={`ada-${idx}`}
             position={feature.position}
             icon={createCustomIcon('#2563eb', '♿')}
@@ -188,7 +191,7 @@ export default function FestivalMap({
 
         {/* Exits */}
         {showExits && FESTIVAL_FEATURES.exits.map((exit, idx) => (
-          <Marker 
+          <Marker
             key={`exit-${idx}`}
             position={exit.position}
             icon={createCustomIcon('#16a34a', '🚪')}
@@ -204,7 +207,7 @@ export default function FestivalMap({
 
         {/* Medical */}
         {showMedical && FESTIVAL_FEATURES.medical.map((med, idx) => (
-          <Marker 
+          <Marker
             key={`med-${idx}`}
             position={med.position}
             icon={createCustomIcon('#dc2626', '🏥')}
@@ -218,7 +221,7 @@ export default function FestivalMap({
 
         {/* Water Stations */}
         {showWater && FESTIVAL_FEATURES.water.map((water, idx) => (
-          <Marker 
+          <Marker
             key={`water-${idx}`}
             position={water.position}
             icon={createCustomIcon('#0ea5e9', '💧')}
@@ -234,7 +237,7 @@ export default function FestivalMap({
         {crowdReports.filter(r => r.status === 'active').map((report, idx) => {
           const iconConfig = getReportIcon(report.report_type);
           return (
-            <Marker 
+            <Marker
               key={`report-${idx}`}
               position={[report.latitude, report.longitude]}
               icon={createCustomIcon(iconConfig.color, iconConfig.icon)}
@@ -251,22 +254,7 @@ export default function FestivalMap({
         })}
       </MapContainer>
 
-      {/* Map Legend */}
-      <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-sm rounded-xl p-3 text-xs text-white z-[1000]">
-        <div className="font-semibold mb-2">Map Legend</div>
-        <div className="space-y-1">
-          {showCrowdDensity && (
-            <>
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span> High Crowd</div>
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-500"></span> Medium Crowd</div>
-              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-green-500"></span> Low Crowd</div>
-            </>
-          )}
-          <div className="flex items-center gap-2">🎵 Stages</div>
-          <div className="flex items-center gap-2">♿ ADA Features</div>
-          <div className="flex items-center gap-2">🚪 Exits</div>
-        </div>
-      </div>
+
     </div>
   );
 }

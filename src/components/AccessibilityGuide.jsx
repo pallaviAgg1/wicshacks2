@@ -1,7 +1,8 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Accessibility, X, ChevronRight, Ear, Eye, Brain, Heart, 
+import {
+  Accessibility, X, ChevronRight, Ear, Eye, Brain, Heart,
   MapPin, Phone, Info, Sparkles
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -99,13 +100,14 @@ export default function AccessibilityGuide() {
   return (
     <>
       {/* Open Button */}
-      <Button
+      {/* Open Button */}
+      <button
         onClick={() => setIsOpen(true)}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl h-12"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all duration-200 shadow-lg bg-black/80 text-white hover:bg-black/90 backdrop-blur-md border border-white/10"
       >
-        <Accessibility className="w-5 h-5 mr-2" />
-        Accessibility Guide
-      </Button>
+        <Accessibility size={18} />
+        <span>Accessibility</span>
+      </button>
 
       {/* Full Screen Modal */}
       <AnimatePresence>
@@ -128,7 +130,7 @@ export default function AccessibilityGuide() {
                     <p className="text-sm text-purple-300">Your festival, your way</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsOpen(false)}
                   className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
                 >
@@ -138,26 +140,6 @@ export default function AccessibilityGuide() {
             </div>
 
             <div className="max-w-2xl mx-auto px-4 pb-8">
-              {/* Welcome Message */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6"
-              >
-                <Card className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <Sparkles className="w-5 h-5 text-purple-400 mt-0.5" />
-                      <div>
-                        <p className="text-purple-100 text-sm">
-                          Everyone deserves to experience the magic of live music. 
-                          We're here to help make your festival experience comfortable and enjoyable.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
 
               {/* Accessibility Sections */}
               <Accordion type="single" collapsible className="space-y-3">
@@ -170,7 +152,7 @@ export default function AccessibilityGuide() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <AccordionItem 
+                      <AccordionItem
                         value={section.id}
                         className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden"
                       >
