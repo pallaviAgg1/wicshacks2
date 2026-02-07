@@ -1,0 +1,41 @@
+// Example: Creating cross-platform components
+
+// Button.web.jsx - Web version
+import React from 'react';
+import { Button as UIButton } from '@/components/ui/button';
+
+export function Button({ children, ...props }) {
+  return <UIButton {...props}>{children}</UIButton>;
+}
+
+// Button.native.jsx - React Native version
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+
+export function Button({ children, onPress, ...props }) {
+  return (
+    <TouchableOpacity style={styles.button} onPress={onPress} {...props}>
+      <Text style={styles.text}>{children}</Text>
+    </TouchableOpacity>
+  );
+}
+
+// How to use:
+// Import directly - the bundler will pick the right version
+// import { Button } from '@/components/Button';

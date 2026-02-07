@@ -1,70 +1,105 @@
-import React from 'react';
-import { SafeAreaView, View, ActivityIndicator, StyleSheet } from 'react-native';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClientInstance } from '@/lib/query-client';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from "@/components/UserNotRegistered";
-import { pagesConfig } from './pages.config';
+import React, { useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { StatusBar } from 'expo-status-bar';
-
-const { Pages, Layout, mainPage } = pagesConfig;
-const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? Pages[mainPageKey] : View;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  loadingContainer: {
+  loading: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -25 }, { translateY: -25 }],
+  },
+  errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#cc0000',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  errorDetail: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
   },
 });
 
-const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+export default function App() {
+  const [error, setError] = useState(null);
+  
+  // Use your computer's local network IP instead of localhost
+  // The phone needs to access your PC over the network
+  const WEB_APP_URL = 'http://11.21.61.195:5173';
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  const handleError = (syntheticEvent) => {
+    const { nativeEvent } = syntheticEvent;
+    console.warn('WebView error: ', nativeEvent);
+    setError({
+      description: nativeEvent.description || 'Failed to load',
+      code: nativeEvent.code || 'Unknown error',
+    });
+  };
+
+  if (error) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          Cannot connect to web app
+        </Text>
+        <Text style={styles.errorDetail}>
+          Make sure the Vite dev server is running at:
+        </Text>
+        <Text style={styles.errorDetail}>
+          {WEB_APP_URL}
+        </Text>
+        <Text style={styles.errorDetail}>
+          {'\n'}Error: {error.description}
+        </Text>
       </View>
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
-
-  // Render the main app
   return (
-    <MainPage />
-  );
-};
-
-
-function App() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <AuthProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <AuthenticatedApp />
-        </QueryClientProvider>
-      </AuthProvider>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+      <WebView
+        source={{ uri: WEB_APP_URL }}
+        style={{ flex: 1 }}
+        startInLoadingState={true}
+        renderLoading={() => (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+        onError={handleError}
+        onHttpError={(syntheticEvent) => {
+          const { nativeEvent } = syntheticEvent;
+          console.warn('HTTP error: ', nativeEvent.statusCode);
+          setError({
+            description: `HTTP ${nativeEvent.statusCode}`,
+            code: nativeEvent.statusCode,
+          });
+        }}
+        // Allow JavaScript execution
+        javaScriptEnabled={true}
+        // Allow DOM storage for better compatibility
+        domStorageEnabled={true}
+        // Allow mixed content for development
+        mixedContentMode="always"
+        // Improve scrolling experience
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      />
+    </View>
   );
 }
 
-export default App;
