@@ -1,0 +1,57 @@
+{
+  "name": "CrowdReport",
+  "type": "object",
+  "properties": {
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "mud",
+        "crowd_dense",
+        "obstacle",
+        "flooding",
+        "uneven_terrain",
+        "blocked_path",
+        "other"
+      ],
+      "description": "Type of hazard or condition"
+    },
+    "description": {
+      "type": "string",
+      "description": "User description of the issue"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "GPS latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "GPS longitude"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "resolved"
+      ],
+      "default": "active"
+    },
+    "upvotes": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "report_type",
+    "latitude",
+    "longitude"
+  ]
+}

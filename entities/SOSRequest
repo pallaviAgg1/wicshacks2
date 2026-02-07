@@ -1,0 +1,46 @@
+{
+  "name": "SOSRequest",
+  "type": "object",
+  "properties": {
+    "emergency_type": {
+      "type": "string",
+      "enum": [
+        "medical",
+        "panic_attack",
+        "dehydration",
+        "lost",
+        "feeling_unsafe",
+        "accessibility_help",
+        "other"
+      ],
+      "description": "Type of emergency or assistance needed"
+    },
+    "description": {
+      "type": "string",
+      "description": "Additional details"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "responding",
+        "resolved"
+      ],
+      "default": "pending"
+    },
+    "contact_phone": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "emergency_type",
+    "latitude",
+    "longitude"
+  ]
+}
