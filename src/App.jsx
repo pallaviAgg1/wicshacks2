@@ -6,10 +6,29 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from "@/components/UserNotRegistered";
+import { useEffect, useState } from "react";
+import NavBar from "./components/NavBar";
+
+const center = [37.3322, -122.0308];
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+
+
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
+});
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -39,6 +58,8 @@ const AuthenticatedApp = () => {
   }
 
   // Render the main app
+  //      <Route path="/heatmap-dev" element={<HeatmapPage />} />
+
   return (
     <Routes>
       <Route path="/" element={
@@ -56,6 +77,7 @@ const AuthenticatedApp = () => {
             </LayoutWrapper>
           }
         />
+
       ))}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
@@ -65,6 +87,19 @@ const AuthenticatedApp = () => {
 
 function App() {
 
+
+  
+  const [points, setPoints] = useState([]);
+
+  // useEffect(() => {
+  //   fetch("http://localhost:5000/detections")
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       // Leaflet heatmap expects [lat, lon, weight]
+  //       const formatted = data.map(p => [p.lat, p.lon, p.weight || 1]);
+  //       setPoints(formatted);
+  //     });
+  // }, []);
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
@@ -73,6 +108,8 @@ function App() {
         </Router>
         <Toaster />
       </QueryClientProvider>
+
+      
     </AuthProvider>
   )
 }
