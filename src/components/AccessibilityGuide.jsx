@@ -116,114 +116,105 @@ export default function AccessibilityGuide() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           >
-            {/* Header */}
-            <div className="sticky top-0 z-10 bg-gradient-to-b from-slate-900 to-transparent backdrop-blur-xl p-4">
-              <div className="flex items-center justify-between max-w-2xl mx-auto">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                    <Accessibility className="w-6 h-6 text-white" />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-slate-900 border border-white/10 w-full max-w-2xl max-h-[85vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-b from-white/5 to-transparent p-6 border-b border-white/5 flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
+                      <Accessibility className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl font-bold text-white">Accessibility Guide</h1>
+                      <p className="text-sm text-purple-300">Your festival, your way</p>
+                    </div>
                   </div>
-                  <div>
-                    <h1 className="text-xl font-bold text-white">Accessibility Guide</h1>
-                    <p className="text-sm text-purple-300">Your festival, your way</p>
-                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-400" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
-                >
-                  <X className="w-5 h-5 text-white" />
-                </button>
               </div>
-            </div>
 
-            <div className="max-w-2xl mx-auto px-4 pb-8">
-
-              {/* Accessibility Sections */}
-              <Accordion type="single" collapsible className="space-y-3">
-                {ACCESSIBILITY_SECTIONS.map((section, idx) => {
-                  const Icon = section.icon;
-                  return (
-                    <motion.div
-                      key={section.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                    >
-                      <AccordionItem
-                        value={section.id}
-                        className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden"
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto p-6 space-y-6 custom-scrollbar">
+                {/* Accessibility Sections */}
+                <Accordion type="single" collapsible className="space-y-3">
+                  {ACCESSIBILITY_SECTIONS.map((section, idx) => {
+                    const Icon = section.icon;
+                    return (
+                      <motion.div
+                        key={section.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 + idx * 0.05 }}
                       >
-                        <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-white/5">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${section.color} flex items-center justify-center`}>
-                              <Icon className="w-5 h-5 text-white" />
+                        <AccordionItem
+                          value={section.id}
+                          className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden"
+                        >
+                          <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-white/5 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${section.color} flex items-center justify-center`}>
+                                <Icon className="w-5 h-5 text-white" />
+                              </div>
+                              <span className="text-white font-medium">{section.title}</span>
                             </div>
-                            <span className="text-white font-medium">{section.title}</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 pb-4">
-                          <ul className="space-y-2 mb-4">
-                            {section.content.map((item, i) => (
-                              <li key={i} className="flex items-start gap-2 text-slate-300 text-sm">
-                                <ChevronRight className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                          <div className="bg-purple-500/20 rounded-xl p-3 flex items-start gap-2">
-                            <Info className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
-                            <p className="text-sm text-purple-200">{section.tip}</p>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </motion.div>
-                  );
-                })}
-              </Accordion>
+                          </AccordionTrigger>
+                          <AccordionContent className="px-4 pb-4">
+                            <ul className="space-y-2 mb-4">
+                              {section.content.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2 text-slate-300 text-sm">
+                                  <ChevronRight className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3 flex items-start gap-2">
+                              <Info className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
+                              <p className="text-sm text-purple-200">{section.tip}</p>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </motion.div>
+                    );
+                  })}
+                </Accordion>
 
-              {/* Emergency Contacts */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mt-6"
-              >
-                <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                  <Phone className="w-5 h-5 text-green-400" />
-                  Important Contacts
-                </h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {IMPORTANT_CONTACTS.map((contact, idx) => (
-                    <a
-                      key={idx}
-                      href={`tel:${contact.phone.replace(/-/g, '')}`}
-                      className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-colors"
-                    >
-                      <p className="text-xs text-slate-400 mb-1">{contact.label}</p>
-                      <p className="text-white font-medium">{contact.phone}</p>
-                    </a>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Close Button */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="mt-8"
-              >
-                <Button
-                  onClick={() => setIsOpen(false)}
-                  className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl text-lg font-semibold"
+                {/* Emergency Contacts */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
                 >
-                  Back to Map
-                </Button>
-              </motion.div>
-            </div>
+                  <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                    <Phone className="w-5 h-5 text-green-400" />
+                    Important Contacts
+                  </h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    {IMPORTANT_CONTACTS.map((contact, idx) => (
+                      <a
+                        key={idx}
+                        href={`tel:${contact.phone.replace(/-/g, '')}`}
+                        className="bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-colors group"
+                      >
+                        <p className="text-xs text-slate-400 mb-1 group-hover:text-slate-300 transition-colors">{contact.label}</p>
+                        <p className="text-white font-medium group-hover:text-purple-300 transition-colors">{contact.phone}</p>
+                      </a>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
