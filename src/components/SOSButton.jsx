@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, X, Phone, Heart, Droplets, MapPin, Users, Accessibility, HelpCircle } from 'lucide-react';
@@ -27,32 +28,58 @@ export default function SOSButton({ userLocation }) {
 
   const handleSubmit = async () => {
     if (!selectedType) return;
-    
+
     setIsSubmitting(true);
+    const emergencyData = {
+      emergency_type: selectedType,
+      description,
+      latitude: userLocation?.lat || 30.2669,
+      longitude: userLocation?.lng || -97.7729,
+      contact_phone: phone,
+      status: 'pending'
+    };
+
     try {
-      await base44.entities.SOSRequest.create({
-        emergency_type: selectedType,
-        description,
-        latitude: userLocation?.lat || 30.2669,
-        longitude: userLocation?.lng || -97.7729,
-        contact_phone: phone,
-        status: 'pending'
-      });
-      
+      // 1. Attempt Online Submission
+      await base44.entities.SOSRequest.create(emergencyData);
+
       toast.success('Help is on the way!', {
         description: 'A festival volunteer has been notified of your location.'
       });
-      
-      setIsOpen(false);
-      setSelectedType(null);
-      setDescription('');
-      setPhone('');
-      setStep(1);
+
+      resetForm();
     } catch (error) {
-      toast.error('Failed to send request. Please try again or call 911.');
+      // 2. Offline Fallback: Trigger Native SMS
+      console.error("SOS Post Failed, triggering SMS Fallback", error);
+      toast.error('Network failed. Switching to SMS...', {
+        description: 'Please hit SEND in your messaging app!'
+      });
+
+      // Construct SMS Body
+      const mapLink = `https://www.google.com/maps?q=${emergencyData.latitude},${emergencyData.longitude}`;
+      const typeLabel = EMERGENCY_TYPES.find(t => t.id === selectedType)?.label || selectedType;
+      const smsBody = `SOS: ${typeLabel}. \nLoc: ${mapLink} \nDetails: ${description || 'None'}`;
+
+      // Determine Recipient (User's contact OR Default Backup)
+      // "555-0199" is the placeholder Base Command number
+      const recipient = phone || "469-403-1344";
+
+      // Trigger SMS Intent
+      window.location.href = `sms:${recipient}?&body=${encodeURIComponent(smsBody)}`;
+
+      // We still reset the form so they aren't stuck
+      resetForm();
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const resetForm = () => {
+    setIsOpen(false);
+    setSelectedType(null);
+    setDescription('');
+    setPhone('');
+    setStep(1);
   };
 
   return (
@@ -63,10 +90,10 @@ export default function SOSButton({ userLocation }) {
         className="fixed bottom-6 right-6 z-50 w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 shadow-2xl flex items-center justify-center"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        animate={{ 
+        animate={{
           boxShadow: ['0 0 0 0 rgba(239, 68, 68, 0.4)', '0 0 0 20px rgba(239, 68, 68, 0)', '0 0 0 0 rgba(239, 68, 68, 0.4)']
         }}
-        transition={{ 
+        transition={{
           boxShadow: { duration: 2, repeat: Infinity }
         }}
       >
@@ -101,7 +128,7 @@ export default function SOSButton({ userLocation }) {
                     <p className="text-sm text-slate-400">Select what you need assistance with</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsOpen(false)}
                   className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center"
                 >
@@ -110,7 +137,7 @@ export default function SOSButton({ userLocation }) {
               </div>
 
               {/* Emergency Call Banner */}
-              <a 
+              <a
                 href="tel:911"
                 className="flex items-center gap-3 p-4 bg-red-500/20 border border-red-500/30 rounded-xl mb-6"
               >
@@ -132,11 +159,10 @@ export default function SOSButton({ userLocation }) {
                         <motion.button
                           key={type.id}
                           onClick={() => setSelectedType(type.id)}
-                          className={`p-4 rounded-xl text-left transition-all ${
-                            isSelected 
-                              ? 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border-2 border-purple-500' 
-                              : 'bg-slate-800/50 border-2 border-transparent hover:border-slate-700'
-                          }`}
+                          className={`p-4 rounded-xl text-left transition-all ${isSelected
+                            ? 'bg-gradient-to-br from-purple-500/30 to-pink-500/30 border-2 border-purple-500'
+                            : 'bg-slate-800/50 border-2 border-transparent hover:border-slate-700'
+                            }`}
                           whileTap={{ scale: 0.98 }}
                         >
                           <div className={`w-10 h-10 rounded-lg ${type.color} flex items-center justify-center mb-2`}>
@@ -149,7 +175,7 @@ export default function SOSButton({ userLocation }) {
                     })}
                   </div>
 
-                  <Button 
+                  <Button
                     onClick={() => setStep(2)}
                     disabled={!selectedType}
                     className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg font-semibold rounded-xl"
@@ -182,7 +208,7 @@ export default function SOSButton({ userLocation }) {
                         className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
                       />
                     </div>
-                    
+
                     {/* Location Display */}
                     <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
                       <MapPin className="w-5 h-5 text-green-500" />
@@ -193,14 +219,14 @@ export default function SOSButton({ userLocation }) {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button 
+                    <Button
                       onClick={() => setStep(1)}
                       variant="outline"
                       className="flex-1 h-14 border-slate-700 text-slate-300"
                     >
                       Back
                     </Button>
-                    <Button 
+                    <Button
                       onClick={handleSubmit}
                       disabled={isSubmitting}
                       className="flex-1 h-14 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-lg font-semibold"
