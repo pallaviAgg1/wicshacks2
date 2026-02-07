@@ -28,7 +28,7 @@ export default function HeatmapPage() {
       style={{ height: "100vh", width: "100%" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <HeatmapLayer points={points} max={100} />
+      <HeatmapLayer points={points}  />
     </MapContainer>
   );
 }

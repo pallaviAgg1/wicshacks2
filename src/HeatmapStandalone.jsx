@@ -8,7 +8,7 @@ import detectionsByFrame from "./detections.json";
 function HeatmapLayer({ points }) {
   const map = useMap();
   useEffect(() => {
-    const layer = L.heatLayer(points, { radius: 25, blur: 20 }).addTo(map);
+    const layer = L.heatLayer(points, { radius: 25, blur: 20, max: 10}).addTo(map);
     return () => map.removeLayer(layer);
   }, [points, map]);
   return null;
