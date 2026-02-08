@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CrowdReport {
+  id        String   @id @default(uuid())
+  report_type String  // "mud", "crowd_dense", "obstacle", "flooding", "uneven_terrain", "blocked_path", "other"
+  description String?
+  latitude  Float
+  longitude Float
+  severity  String   @default("medium") // "low", "medium", "high"
+  status    String   @default("active") // "active", "resolved"
+  upvotes   Int      @default(0)
+  created_date DateTime @default(now())
+  updated_date DateTime @updatedAt
+
+  @@index([status])
+  @@index([created_date])
+}
+
+model SOSRequest {
+  id        String   @id @default(uuid())
+  emergency_type String // "medical", "panic_attack", "dehydration", "lost", "feeling_unsafe", "accessibility_help", "other"
+  description String?
+  latitude  Float
+  longitude Float
+  status    String   @default("pending") // "pending", "responding", "resolved"
+  contact_phone String?
+  created_date DateTime @default(now())
+  updated_date DateTime @updatedAt
+
+  @@index([status])
+  @@index([created_date])
+}

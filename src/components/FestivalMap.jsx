@@ -128,6 +128,9 @@ export default function FestivalMap({
         zoom={17}
         className="w-full h-full z-0"
         zoomControl={false}
+        style={{
+          filter: 'invert(1) hue-rotate(290deg) invert(1)'
+        }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

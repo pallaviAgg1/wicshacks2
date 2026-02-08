@@ -60,7 +60,7 @@ export default function Home() {
               <span className="text-white font-black text-sm">ACL</span>
             </div>
             <div>
-              <h1 className="font-bold text-white text-lg leading-tight">SafeNav</h1>
+              <h1 className="font-bold text-white text-lg leading-tight">Fest Assured</h1>
               <p className="text-[10px] text-purple-300 uppercase tracking-widest">Festival Guide</p>
             </div>
           </div>

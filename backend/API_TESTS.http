@@ -1,0 +1,43 @@
+# SafeNav Backend API Test Examples
+
+# Health check
+GET http://localhost:3001/api/health
+
+# Get all crowd reports
+GET http://localhost:3001/api/entities/CrowdReport
+
+# Get nearby crowd reports (within 1000m)
+GET http://localhost:3001/api/entities/CrowdReport/nearby?latitude=30.2672&longitude=-97.7431&radius=1000
+
+# Create a crowd report
+POST http://localhost:3001/api/entities/CrowdReport
+Content-Type: application/json
+
+{
+  "report_type": "mud",
+  "description": "Very muddy area near entrance",
+  "latitude": 30.2672,
+  "longitude": -97.7431,
+  "severity": "medium"
+}
+
+# Get all SOS requests
+GET http://localhost:3001/api/entities/SOSRequest
+
+# Get nearby SOS requests (within 1000m)
+GET http://localhost:3001/api/entities/SOSRequest/nearby?latitude=30.2672&longitude=-97.7431&radius=1000
+
+# Create an SOS request
+POST http://localhost:3001/api/entities/SOSRequest
+Content-Type: application/json
+
+{
+  "emergency_type": "medical",
+  "description": "Person needs medical attention",
+  "latitude": 30.2672,
+  "longitude": -97.7431,
+  "contact_phone": "555-1234"
+}
+
+# Analytics summary
+GET http://localhost:3001/api/analytics/summary
