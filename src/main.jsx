@@ -5,5 +5,5 @@ import '@/index.css'
 import HeatmapStandalone from './HeatmapStandalone'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <App />
+  <Home />
 )
